@@ -1,0 +1,26 @@
+meta {
+  name: Post proxy
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{server}}/proxy/proxy
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "url" : "https://wissel.net/"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
