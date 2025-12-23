@@ -17,10 +17,12 @@ public class ProxyResource {
 
   @Inject
   EventBus eventBus;
+
   @Inject
   ObjectMapper mapper;
 
   @POST
+  @Path("/proxy")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.TEXT_HTML)
   public Uni<Response> proxy(ProxyRequest request) {
@@ -37,8 +39,10 @@ public class ProxyResource {
     ProxyResult result = mapper.convertValue(json, ProxyResult.class);
     Response.ResponseBuilder responseBuilder = Response.status(result.statusCode);
     if (result.headers != null) {
-      result.headers.forEach((key, value) -> responseBuilder.header(key, value));
+      result.headers.forEach(responseBuilder::header);
     }
     return responseBuilder.entity(result.body).build();
   }
+
+
 }

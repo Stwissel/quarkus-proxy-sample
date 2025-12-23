@@ -28,7 +28,7 @@ public class ProxyResourceTest {
         .contentType(ContentType.JSON)
         .body(new ProxyRequest() {
           {
-            url = "https://example.com";
+            url = "https://httpbin.org/get";
           }
         })
         .when()

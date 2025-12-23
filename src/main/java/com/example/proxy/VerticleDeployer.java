@@ -15,10 +15,9 @@ public class VerticleDeployer {
 
   void init(@Observes final StartupEvent e, final Vertx vertx) {
     vertx.deployVerticle(new UrlProcessorVerticle(), new DeploymentOptions())
-        .subscribe().with(id -> {
-          System.out.println("Deployed UrlProcessorVerticle with id: " + id);
-        }, failure -> {
-          System.err.println("Failed to deploy UrlProcessorVerticle: " + failure.getMessage());
-        });
+        .flatMap(id -> vertx.deployVerticle(new UrlProcessorVerticleNeo(), new DeploymentOptions()))
+        .subscribe().with(id -> System.out.println("Deployed UrlProcessorVerticle with id: " + id),
+            failure -> System.err
+                .println("Failed to deploy UrlProcessorVerticle: " + failure.getMessage()));
   }
 }

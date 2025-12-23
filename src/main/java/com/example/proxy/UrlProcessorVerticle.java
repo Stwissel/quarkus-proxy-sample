@@ -8,6 +8,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
@@ -16,8 +17,8 @@ import io.vertx.ext.web.codec.BodyCodec;
 public class UrlProcessorVerticle extends AbstractVerticle {
 
   public static final String ADDRESS = "processurl";
-
   private WebClient webClient;
+
 
   @Override
   public void start(Promise<Void> startPromise) {
@@ -28,6 +29,7 @@ public class UrlProcessorVerticle extends AbstractVerticle {
         .setConnectTimeout(5_000)
         .setKeepAlive(true);
     this.webClient = WebClient.create(vertx, options);
+
 
     EventBus eb = vertx.eventBus();
     eb.<String>consumer(ADDRESS, this::onProcessUrl);
@@ -48,14 +50,14 @@ public class UrlProcessorVerticle extends AbstractVerticle {
         .send()
         .onSuccess(resp -> {
           ProxyResult result = toResult(resp);
-          msg.reply(io.vertx.core.json.JsonObject.mapFrom(result));
+          msg.reply(JsonObject.mapFrom(result));
         })
         .onFailure(err -> {
           ProxyResult result = new ProxyResult();
           result.statusCode = 0;
           result.headers = java.util.Collections.emptyMap();
           result.body = "error: " + err.getClass().getSimpleName() + ": " + err.getMessage();
-          msg.reply(io.vertx.core.json.JsonObject.mapFrom(result));
+          msg.reply(JsonObject.mapFrom(result));
         });
   }
 
